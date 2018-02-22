@@ -107,6 +107,15 @@ int vgmfmprm_main(FILE *fp, struct vgm_header_tag *vgm_header)
 			}
 			vgmfmprm_ym2151(aa, dd);
 			break;
+		case 0x55:
+			// YM2203
+			fread(&aa, sizeof(aa), 1, fp);
+			fread(&dd, sizeof(dd), 1, fp);
+			if (g_flg.d){
+				printf("%08x %02x %02x %02x: YM2203: \n", (uint32_t)fpos, cmd, aa, dd);
+			}
+			vgmfmprm_ym2203(aa, dd);
+			break;
 		case 0x61:
 			fread(&aa, sizeof(aa), 1, fp);
 			fread(&dd, sizeof(dd), 1, fp);

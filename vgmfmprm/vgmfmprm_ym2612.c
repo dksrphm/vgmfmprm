@@ -202,7 +202,7 @@ int format_ym2612(uint8_t ch)
 	uint8_t reg;
 
 	printf("%s[%d]:\n", CHIPNAME, ch + 1);
-	printf("'@ M No\n");
+	printf("'@ N No\n");
 	printf("    AR  DR  SR  RR  SL  TL  KS  ML  DT  AM SSGEG\n");
 	for (op = 0; op < 4; op++){
 		printf("'@ ");
