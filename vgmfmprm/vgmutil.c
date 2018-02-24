@@ -79,5 +79,57 @@ int seektostream(FILE *fp, struct vgm_header_tag *vgm_header)
 	}
 	return 1;
 }
+int formatN(char *CHIPNAME, int ch, uint32_t samples, int tonenum, uint8_t fmprm[46])
+{
+	/* in mml2vgm
+	'@ N No
+	'@ AR DR SR RR SL TL KS ML DT AM SSGEG <- ym2203reg[ch][0]-[10]
+	'@ AR DR SR RR SL TL KS ML DT AM SSGEG <- ym2203reg[ch][11]-[21]
+	'@ AR DR SR RR SL TL KS ML DT AM SSGEG <- ym2203reg[ch][22]-[32]
+	'@ AR DR SR RR SL TL KS ML DT AM SSGEG <- ym2203reg[ch][33]-[43]
+	'@ AL FB <- ym2203reg[ch][44]-[45]
+	*/
+	uint8_t op;
+	uint8_t reg;
 
+	printf("%s[%d] samples:%d\n", CHIPNAME, ch + 1, samples);
+	printf("'@ N %d\n", tonenum);
+	printf("    AR  DR  SR  RR  SL  TL  KS  ML  DT  AM SSGEG\n");
+	for (op = 0; op < 4; op++){
+		printf("'@ ");
+		for (reg = 0; reg < 11; reg++){
+			printf("%03d,", fmprm[op * 11 + reg]);
+		}
+		printf("\n");
+	}
+	printf("   ALG  FB\n");
+	printf("'@ %03d,%03d\n\n", fmprm[44], fmprm[45]);
+	return 1;
+}
+int formatM(char *CHIPNAME, int ch, uint32_t samples, int tonenum, uint8_t fmprm[46])
+{
+	/* in mml2vgm
+	'@ M No
+	'@ AR DR SR RR SL TL KS ML DT1 DT2 AME <- ym2151reg[ch][0]-[10]
+	'@ AR DR SR RR SL TL KS ML DT1 DT2 AME <- ym2151reg[ch][11]-[21]
+	'@ AR DR SR RR SL TL KS ML DT1 DT2 AME <- ym2151reg[ch][22]-[32]
+	'@ AR DR SR RR SL TL KS ML DT1 DT2 AME <- ym2151reg[ch][33]-[43]
+	'@ AL FB <- ym2151reg[ch][44]-[45]
+	*/
+	uint8_t op;
+	uint8_t reg;
 
+	printf("%s[%d] samples:%d\n", CHIPNAME, ch + 1, samples);
+	printf("'@ M %d\n", tonenum);
+	printf("    AR  DR  SR  RR  SL  TL  KS  ML DT1 DT2 AME\n");
+	for (op = 0; op < 4; op++){
+		printf("'@ ");
+		for (reg = 0; reg < 11; reg++){
+			printf("%03d,", fmprm[op * 11 + reg]);
+		}
+		printf("\n");
+	}
+	printf("   ALG  FB\n");
+	printf("'@ %03d,%03d\n\n", fmprm[44], fmprm[45]);
+	return 1;
+}

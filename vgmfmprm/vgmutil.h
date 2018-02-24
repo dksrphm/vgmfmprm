@@ -15,6 +15,8 @@ int chkvgm(FILE *);
 int vgmfmprm_main(FILE *, struct vgm_header_tag *);
 int seektostream(FILE *, struct vgm_header_tag *);
 int calcEndPos(struct vgm_header_tag *);
+int formatN(char *, int, uint32_t, int, uint8_t *);
+int formatM(char *, int, uint32_t, int, uint8_t *);
 
 #define POSVER 0x08
 #define VER150 0x150
@@ -30,5 +32,7 @@ extern int chkvgm(FILE *);
 extern int vgmfmprm_main(FILE *, struct vgm_header_tag *);
 extern int seektostream(FILE *, struct vgm_header_tag *);
 extern int calcEndPos(struct vgm_header_tag *);
+extern int formatN(char *, int, uint32_t, int, uint8_t *);
+extern int formatM(char *, int, uint32_t, int, uint8_t *);
 
 #endif /* VGMUTIL_H_ */
