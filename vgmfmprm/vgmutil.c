@@ -92,7 +92,7 @@ int formatN(char *CHIPNAME, int ch, uint32_t samples, int tonenum, uint8_t fmprm
 	uint8_t op;
 	uint8_t reg;
 
-	printf("%s[%d] samples:%d\n", CHIPNAME, ch + 1, samples);
+	printf("%s[%d] samples:%d @%d\n", CHIPNAME, ch + 1, samples, tonenum);
 	printf("'@ N %d\n", tonenum);
 	printf("    AR  DR  SR  RR  SL  TL  KS  ML  DT  AM SSGEG\n");
 	for (op = 0; op < 4; op++){
@@ -119,7 +119,7 @@ int formatM(char *CHIPNAME, int ch, uint32_t samples, int tonenum, uint8_t fmprm
 	uint8_t op;
 	uint8_t reg;
 
-	printf("%s[%d] samples:%d\n", CHIPNAME, ch + 1, samples);
+	printf("%s[%d] samples:%d @%d\n", CHIPNAME, ch + 1, samples, tonenum);
 	printf("'@ M %d\n", tonenum);
 	printf("    AR  DR  SR  RR  SL  TL  KS  ML DT1 DT2 AME\n");
 	for (op = 0; op < 4; op++){
