@@ -48,7 +48,6 @@ int vgmfmprm_ym2151(uint8_t aa, uint8_t dd)
 		ch = dd & 0x07;
 		if (regchg[ch]){
 			if (dd & 0x78){ // 01111000
-				//format_ym2151(ch);
 				formatM(CHIPNAME, ch, samples, 234, fmprm[ch]);
 				regchg[ch] = 0;
 			}

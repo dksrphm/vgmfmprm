@@ -94,9 +94,7 @@ int vgmfmprm_ym2612(uint8_t port, uint8_t aa, uint8_t dd)
 					}
 					if (cmp){
 						// not exists in tone[]
-						//format_ym2612(ch, tones);
 						formatN(CHIPNAME, ch, samples, tones, fmprm[ch]);
-
 						memcpy(tone[tones], fmprm[ch], sizeof(fmprm[ch]));
 						tones++;
 					} else {
