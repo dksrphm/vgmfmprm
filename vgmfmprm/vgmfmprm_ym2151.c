@@ -6,17 +6,21 @@
  */
 
 #include <stdio.h>
+#include <string.h>
 #include "vgmfmprm.h"
 #include "vgmutil.h"
 
 #define CHIPNAME "YM2151"
 #define CHS 8
 #define REGS 46
+#define TONES 255
 
 extern OPTIONS g_flg;
 
 static uint8_t fmprm[CHS][REGS] = {0};
 static uint8_t regchg[CHS] = {0};
+static uint8_t tone[TONES][REGS] = {0};
+static uint8_t tones = 0;
 
 int vgmfmprm_ym2151(uint8_t aa, uint8_t dd)
 {
@@ -38,8 +42,9 @@ int vgmfmprm_ym2151(uint8_t aa, uint8_t dd)
 	*/
 	uint8_t ch;
 	uint8_t op;
-
 	uint8_t opind[4] = {0, 2, 1, 3}; // aa: OP1 OP3 OP2 OP4
+	int i;
+	int cmp;
 
 	switch (aa){
 	case 0x08:
@@ -47,15 +52,46 @@ int vgmfmprm_ym2151(uint8_t aa, uint8_t dd)
 		// その時の音色定義を出力する
 		ch = dd & 0x07;
 		if (regchg[ch]){
-			if (dd & 0x78){ // 01111000
-				formatM(CHIPNAME, ch, samples, 234, fmprm[ch]);
+			if (dd & 0xf0){ // 11110000
+				// tones already > TONES?
+				if (TONES < tones){
+					printf("%s: tones over %d.\n", CHIPNAME, TONES);
+				} else {
+					// are prm[] already exist in tone[]?
+					cmp = 1;
+					for (i = 0; i < tones; i++){
+						if (!memcmp(tone[i], fmprm[ch], sizeof(fmprm[ch]))){
+							cmp = 0;
+							break;
+						}
+					}
+					if (cmp){
+						// not exists in tone[]
+						formatM(CHIPNAME, ch, samples, tones, fmprm[ch]);
+						memcpy(tone[tones], fmprm[ch], sizeof(fmprm[ch]));
+						tones++;
+					} else {
+						printf("%s[%d] samples:%d @%d\n", CHIPNAME, ch + 1, samples, i);
+					}
+				}
 				regchg[ch] = 0;
 			}
 		}
-//		if (g_flg.r){
-//			printf("%08x %s[%d]reg: %02x %02x\n", fpos, CHIPNAME, ch + 1, aa, dd);
-//		}
 		break;
+//	case 0x08:
+//		// 音色関係のレジスタが変更され、Key-Onとなった時点で
+//		// その時の音色定義を出力する
+//		ch = dd & 0x07;
+//		if (regchg[ch]){
+//			if (dd & 0x78){ // 01111000
+//				formatM(CHIPNAME, ch, samples, 234, fmprm[ch]);
+//				regchg[ch] = 0;
+//			}
+//		}
+////		if (g_flg.r){
+////			printf("%08x %s[%d]reg: %02x %02x\n", fpos, CHIPNAME, ch + 1, aa, dd);
+////		}
+//		break;
 	case 0x20 ... 0x27:
 		// AL=CON FB=FL
 		ch = aa - 0x20;
