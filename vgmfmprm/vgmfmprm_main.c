@@ -124,6 +124,18 @@ int vgmfmprm_main(FILE *fp, struct vgm_header_tag *vgm_header)
 			}
 			vgmfmprm_ym2203(aa, dd);
 			break;
+		case 0x56:
+		case 0x57:
+			// YM2608
+			port = cmd - 0x56;
+			fread(&aa, sizeof(aa), 1, fp);
+			fread(&dd, sizeof(dd), 1, fp);
+			if (g_flg.d){
+				printf("%08x %02x %02x %02x: YM2608: port %d addr %02x data %02x\n",
+					(uint32_t)fpos, cmd, aa, dd, port, aa, dd);
+			}
+			vgmfmprm_ym2608(port, aa, dd);
+			break;
 		case 0x70 ... 0x7f:
 			samples = samples + cmd - 0x70 + 1;
 			if (g_flg.d){

@@ -19,12 +19,14 @@ typedef struct {
 
 int vgmfmprm_ym2151(uint8_t, uint8_t);
 int vgmfmprm_ym2203(uint8_t, uint8_t);
+int vgmfmprm_ym2608(uint8_t, uint8_t, uint8_t);
 int vgmfmprm_ym2612(uint8_t, uint8_t, uint8_t);
 
 #else
 //extern OPTIONS g_flg;
 extern int vgmfmprm_ym2151(uint8_t, uint8_t);
 extern int vgmfmprm_ym2203(uint8_t, uint8_t);
+extern int vgmfmprm_ym2608(uint8_t, uint8_t, uint8_t);
 extern int vgmfmprm_ym2612(uint8_t, uint8_t, uint8_t);
 
 #endif /* VGMFMPRM_H_ */

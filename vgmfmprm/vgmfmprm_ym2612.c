@@ -5,12 +5,6 @@
  *      Author: dsrphm
  */
 
-// Todo:
-
-// 過去に出力した情報は出力させない
-// Sonic2のChemical plant zoneはch1の音色を何度も切り替えており
-// そのたびに表示されるため
-
 #include <stdio.h>
 #include <string.h>
 #include "vgmfmprm.h"
@@ -34,20 +28,20 @@ int vgmfmprm_ym2612(uint8_t port, uint8_t aa, uint8_t dd)
 {
 	/* in mml2vgm
 	'@ N No
-	'@ AR DR SR RR SL TL KS ML DT AM SSGEG <- ym2612reg[ch][0]-[10]
-	'@ AR DR SR RR SL TL KS ML DT AM SSGEG <- ym2612reg[ch][11]-[21]
-	'@ AR DR SR RR SL TL KS ML DT AM SSGEG <- ym2612reg[ch][22]-[32]
-	'@ AR DR SR RR SL TL KS ML DT AM SSGEG <- ym2612reg[ch][33]-[43]
-	'@ AL FB <- ym2612reg[ch][44]-[45]
+	'@ AR DR SR RR SL TL KS ML DT AM SSGEG <- fmprm[ch][0]-[10]
+	'@ AR DR SR RR SL TL KS ML DT AM SSGEG <- fmprm[ch][11]-[21]
+	'@ AR DR SR RR SL TL KS ML DT AM SSGEG <- fmprm[ch][22]-[32]
+	'@ AR DR SR RR SL TL KS ML DT AM SSGEG <- fmprm[ch][33]-[43]
+	'@ AL FB <- fmprm[ch][44]-[45]
 	*/
 	/* in datasheet
 	'@ N No
 	    0  1   2   3  4   5  6  7   8   9   10
-	'@ AR D1R D2R RR D1L TL RS MUL DT1 AM SSGEG <- ym2612reg[ch][0]-[10]
-	'@ AR D1R D2R RR D1L TL RS MUL DT1 AM SSGEG <- ym2612reg[ch][11]-[21]
-	'@ AR D1R D2R RR D1L TL RS MUL DT1 AM SSGEG <- ym2612reg[ch][22]-[32]
-	'@ AR D1R D2R RR D1L TL RS MUL DT1 AM SSGEG <- ym2612reg[ch][33]-[43]
-	'@ AL FB <- ym2612reg[ch][44]-[45]
+	'@ AR D1R D2R RR D1L TL RS MUL DT1 AM SSGEG <- fmprm[ch][0]-[10]
+	'@ AR D1R D2R RR D1L TL RS MUL DT1 AM SSGEG <- fmprm[ch][11]-[21]
+	'@ AR D1R D2R RR D1L TL RS MUL DT1 AM SSGEG <- fmprm[ch][22]-[32]
+	'@ AR D1R D2R RR D1L TL RS MUL DT1 AM SSGEG <- fmprm[ch][33]-[43]
+	'@ AL FB <- fmprm[ch][44]-[45]
 	*/
 	/*
 		0xX0 ch1 op1
@@ -84,7 +78,7 @@ int vgmfmprm_ym2612(uint8_t port, uint8_t aa, uint8_t dd)
 				if (TONES < tones){
 					printf("%s: tones over %d.\n", CHIPNAME, TONES);
 				} else {
-					// are reg[] already exist in tone[]?
+					// are fmprm[] already exist in tone[]?
 					cmp = 1;
 					for (i = 0; i < tones; i++){
 						if (!memcmp(tone[i], fmprm[ch], sizeof(fmprm[ch]))){
@@ -104,11 +98,10 @@ int vgmfmprm_ym2612(uint8_t port, uint8_t aa, uint8_t dd)
 				regchg[ch] = 0;
 			}
 		}
-//		if (g_flg.r){
-//			printf("%08x %s[%d][%d]reg: %02x %02x\n", fpos, CHIPNAME, port, ch + 1, aa, dd);
-//		}
+		if (g_flg.r){
+			printf("%08x %s[%d][%d]reg: %02x %02x\n", fpos, CHIPNAME, port, ch + 1, aa, dd);
+		}
 		break;
-
 	case 0x30 ... 0x3f:
 		// DT=DT1 ML=MUL
 		op = opind[(aa - 0x30) / 4];

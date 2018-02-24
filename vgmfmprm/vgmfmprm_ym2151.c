@@ -26,19 +26,19 @@ int vgmfmprm_ym2151(uint8_t aa, uint8_t dd)
 {
 	/* in mml2vgm
 	'@ M No
-	'@ AR DR SR RR SL TL KS ML DT1 DT2 AME <- ym2151reg[ch][0]-[10]
-	'@ AR DR SR RR SL TL KS ML DT1 DT2 AME <- ym2151reg[ch][11]-[21]
-	'@ AR DR SR RR SL TL KS ML DT1 DT2 AME <- ym2151reg[ch][22]-[32]
-	'@ AR DR SR RR SL TL KS ML DT1 DT2 AME <- ym2151reg[ch][33]-[43]
-	'@ AL FB  <- ym2151reg[ch][44]-[45]
+	'@ AR DR SR RR SL TL KS ML DT1 DT2 AME <- fmprm[ch][0]-[10]
+	'@ AR DR SR RR SL TL KS ML DT1 DT2 AME <- fmprm[ch][11]-[21]
+	'@ AR DR SR RR SL TL KS ML DT1 DT2 AME <- fmprm[ch][22]-[32]
+	'@ AR DR SR RR SL TL KS ML DT1 DT2 AME <- fmprm[ch][33]-[43]
+	'@ AL FB  <- fmprm[ch][44]-[45]
 	*/
 	/* in YM2151 datasheet
 	'@ M No
-	'@ AR D1R D2R RR D1L TL KS MUL DT1 DT2 AME <- ym2151reg[ch][0]-[10]
-	'@ AR D1R D2R RR D1L TL KS MUL DT1 DT2 AME <- ym2151reg[ch][11]-[21]
-	'@ AR D1R D2R RR D1L TL KS MUL DT1 DT2 AME <- ym2151reg[ch][22]-[32]
-	'@ AR D1R D2R RR D1L TL KS MUL DT1 DT2 AME <- ym2151reg[ch][33]-[43]
-	'@ CON FL  <- ym2151reg[ch][44]-[45]
+	'@ AR D1R D2R RR D1L TL KS MUL DT1 DT2 AME <- fmprm[ch][0]-[10]
+	'@ AR D1R D2R RR D1L TL KS MUL DT1 DT2 AME <- fmprm[ch][11]-[21]
+	'@ AR D1R D2R RR D1L TL KS MUL DT1 DT2 AME <- fmprm[ch][22]-[32]
+	'@ AR D1R D2R RR D1L TL KS MUL DT1 DT2 AME <- fmprm[ch][33]-[43]
+	'@ CON FL  <- fmprm[ch][44]-[45]
 	*/
 	uint8_t ch;
 	uint8_t op;
@@ -57,7 +57,7 @@ int vgmfmprm_ym2151(uint8_t aa, uint8_t dd)
 				if (TONES < tones){
 					printf("%s: tones over %d.\n", CHIPNAME, TONES);
 				} else {
-					// are prm[] already exist in tone[]?
+					// are fmprm[] already exist in tone[]?
 					cmp = 1;
 					for (i = 0; i < tones; i++){
 						if (!memcmp(tone[i], fmprm[ch], sizeof(fmprm[ch]))){
@@ -77,21 +77,10 @@ int vgmfmprm_ym2151(uint8_t aa, uint8_t dd)
 				regchg[ch] = 0;
 			}
 		}
+		if (g_flg.r){
+			printf("%08x %s[%d]reg: %02x %02x\n", fpos, CHIPNAME, ch + 1, aa, dd);
+		}
 		break;
-//	case 0x08:
-//		// 音色関係のレジスタが変更され、Key-Onとなった時点で
-//		// その時の音色定義を出力する
-//		ch = dd & 0x07;
-//		if (regchg[ch]){
-//			if (dd & 0x78){ // 01111000
-//				formatM(CHIPNAME, ch, samples, 234, fmprm[ch]);
-//				regchg[ch] = 0;
-//			}
-//		}
-////		if (g_flg.r){
-////			printf("%08x %s[%d]reg: %02x %02x\n", fpos, CHIPNAME, ch + 1, aa, dd);
-////		}
-//		break;
 	case 0x20 ... 0x27:
 		// AL=CON FB=FL
 		ch = aa - 0x20;
