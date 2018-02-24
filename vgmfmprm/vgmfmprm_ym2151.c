@@ -55,9 +55,9 @@ int vgmfmprm_ym2151(uint8_t aa, uint8_t dd)
 				regchg[ch] = 0;
 			}
 		}
-		if (g_flg.r){
-			printf("%08x %s[%d]reg: %02x %02x\n", fpos, CHIPNAME, ch + 1, aa, dd);
-		}
+//		if (g_flg.r){
+//			printf("%08x %s[%d]reg: %02x %02x\n", fpos, CHIPNAME, ch + 1, aa, dd);
+//		}
 		break;
 	case 0x20 ... 0x27:
 		// AL=CON FB=FL

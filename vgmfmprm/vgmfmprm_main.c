@@ -57,6 +57,14 @@ int vgmfmprm_main(FILE *fp, struct vgm_header_tag *vgm_header)
 			}
 			//vgm_fprm_ym2612(aa, dd);
 			break;
+		case 0x61:
+			fread(&aa, sizeof(aa), 1, fp);
+			fread(&dd, sizeof(dd), 1, fp);
+			samples = samples + aa + dd * 256;
+			if (g_flg.d){
+				printf("%08x %02x %02x %02x: VGM: wait %d samples.\n", (uint32_t)fpos, cmd, aa, dd, aa + dd * 0x100);
+			}
+			break;
 		case 0x62:
 			samples += 732;
 			if (g_flg.d){
@@ -115,14 +123,6 @@ int vgmfmprm_main(FILE *fp, struct vgm_header_tag *vgm_header)
 				printf("%08x %02x %02x %02x: YM2203: \n", (uint32_t)fpos, cmd, aa, dd);
 			}
 			vgmfmprm_ym2203(aa, dd);
-			break;
-		case 0x61:
-			fread(&aa, sizeof(aa), 1, fp);
-			fread(&dd, sizeof(dd), 1, fp);
-			samples = samples + aa + dd * 16;
-			if (g_flg.d){
-				printf("%08x %02x %02x %02x: VGM: wait %d samples.\n", (uint32_t)fpos, cmd, aa, dd, aa + dd * 0x100);
-			}
 			break;
 		case 0x70 ... 0x7f:
 			samples = samples + cmd - 0x70 + 1;

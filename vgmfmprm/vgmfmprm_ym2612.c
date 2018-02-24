@@ -12,22 +12,27 @@
 // ‚»‚Ì‚½‚Ñ‚É•\Ž¦‚³‚ê‚é‚½‚ß
 
 #include <stdio.h>
+#include <string.h>
 #include "vgmfmprm.h"
 #include "vgmutil.h"
 
 #define CHIPNAME "YM2612"
 #define CHS 6
 #define REGS 46
+#define TONES 255
 
 static uint8_t ym2612reg[CHS][REGS] = {0};
 static uint8_t regchg[CHS] = {0};
-
+static uint8_t tone[TONES][REGS] = {0};
+static uint8_t tones = 0;
 
 extern OPTIONS g_flg;
 extern uint32_t fpos;
+extern uint32_t samples;
 
-int format_ym2612(uint8_t);
-int serialize_ym2612(uint8_t, uint8_t, uint8_t);
+
+int format_ym2612(uint8_t, int);
+static int serialize(uint8_t, uint8_t, uint8_t);
 
 int vgmfmprm_ym2612(uint8_t port, uint8_t aa, uint8_t dd)
 {
@@ -63,6 +68,8 @@ int vgmfmprm_ym2612(uint8_t port, uint8_t aa, uint8_t dd)
 	uint8_t op;
 	uint8_t opind[4] = {0, 2, 1, 3};
 	uint8_t chind[8] = {0, 1, 2, 9, 3, 4, 5, 9};
+	int i;
+	int cmp;
 
 	// port‚Æaa‚©‚çch‚ð‹‚ß‚é
 	if ((aa % 4) == 3){
@@ -77,15 +84,33 @@ int vgmfmprm_ym2612(uint8_t port, uint8_t aa, uint8_t dd)
 		ch = chind[dd & 0x07];
 		if (regchg[ch]){
 			if (dd & 0xf0){ // 11110000
-				format_ym2612(ch);
+				// tones already > TONES?
+				if (TONES < tones){
+					printf("%s: tones over %d.\n", CHIPNAME, TONES);
+				} else {
+					// are reg[] already exist in tone[]?
+					cmp = 1;
+					for (i = 0; i < tones; i++){
+						if (!memcmp(tone[i], ym2612reg[ch], sizeof(ym2612reg[ch]))){
+							cmp = 0;
+							break;
+						}
+					}
+					if (cmp){
+						// not exists in tone[]
+						format_ym2612(ch, tones);
+						memcpy(tone[tones], ym2612reg[ch], sizeof(ym2612reg[ch]));
+						tones++;
+					} else {
+						printf("%s[%d] samples:%d @%d\n", CHIPNAME, ch + 1, samples, i);
+					}
+				}
 				regchg[ch] = 0;
 			}
 		}
-		if (g_flg.r){
-			printf("%08x %s[%d][%d]reg: %02x %02x\n", fpos, CHIPNAME, port, ch + 1, aa, dd);
-			printf("### regchg[%d]:%d\n", ch, regchg[ch]);
-			printf("### dd & 0xf0:%d\n", dd & 0xf0);
-		}
+//		if (g_flg.r){
+//			printf("%08x %s[%d][%d]reg: %02x %02x\n", fpos, CHIPNAME, port, ch + 1, aa, dd);
+//		}
 		break;
 
 	case 0x30 ... 0x3f:
@@ -98,7 +123,7 @@ int vgmfmprm_ym2612(uint8_t port, uint8_t aa, uint8_t dd)
 		ym2612reg[ch][8 + 11 * op] = (dd & 0x70) >> 4; //01110000
 		if (g_flg.r){
 			printf("%08x %s[%d][%d][%d]reg: %02x %02x\n", fpos, CHIPNAME, port, ch + 1, op + 1, aa, dd);
-			serialize_ym2612(aa, dd, ch);
+			serialize(aa, dd, ch);
 		}
 		break;
 	case 0x40 ... 0x4f:
@@ -108,7 +133,7 @@ int vgmfmprm_ym2612(uint8_t port, uint8_t aa, uint8_t dd)
 		ym2612reg[ch][5 + 11 * op] = (dd & 0x7f) >> 0; //01111111
 		if (g_flg.r){
 			printf("%08x %s[%d][%d][%d]reg: %02x %02x\n", fpos, CHIPNAME, port, ch + 1, op + 1, aa, dd);
-			serialize_ym2612(aa, dd, ch);
+			serialize(aa, dd, ch);
 		}
 		break;
 	case 0x50 ... 0x5f:
@@ -121,7 +146,7 @@ int vgmfmprm_ym2612(uint8_t port, uint8_t aa, uint8_t dd)
 		ym2612reg[ch][0 + 11 * op] = (dd & 0x1f) >> 0; //00011111
 		if (g_flg.r){
 			printf("%08x %s[%d][%d][%d]reg: %02x %02x\n", fpos, CHIPNAME, port, ch + 1, op + 1, aa, dd);
-			serialize_ym2612(aa, dd, ch);
+			serialize(aa, dd, ch);
 		}
 		break;
 	case 0x60 ... 0x6f:
@@ -134,7 +159,7 @@ int vgmfmprm_ym2612(uint8_t port, uint8_t aa, uint8_t dd)
 		ym2612reg[ch][1 + 11 * op] = (dd & 0x1f) >> 0; //00011111
 		if (g_flg.r){
 			printf("%08x %s[%d][%d][%d]reg: %02x %02x\n", fpos, CHIPNAME, port, ch + 1, op + 1, aa, dd);
-			serialize_ym2612(aa, dd, ch);
+			serialize(aa, dd, ch);
 		}
 		break;
 	case 0x70 ... 0x7f:
@@ -144,7 +169,7 @@ int vgmfmprm_ym2612(uint8_t port, uint8_t aa, uint8_t dd)
 		ym2612reg[ch][2 + 11 * op] = (dd & 0x1f) >> 0; //00011111
 		if (g_flg.r){
 			printf("%08x %s[%d][%d][%d]reg: %02x %02x\n", fpos, CHIPNAME, port, ch + 1, op + 1, aa, dd);
-			serialize_ym2612(aa, dd, ch);
+			serialize(aa, dd, ch);
 		}
 		break;
 	case 0x80 ... 0x8f:
@@ -157,7 +182,7 @@ int vgmfmprm_ym2612(uint8_t port, uint8_t aa, uint8_t dd)
 		ym2612reg[ch][3 + 11 * op] = (dd & 0x0f) >> 0; //00001111
 		if (g_flg.r){
 			printf("%08x %s[%d][%d][%d]reg: %02x %02x\n", fpos, CHIPNAME, port, ch + 1, op + 1, aa, dd);
-			serialize_ym2612(aa, dd, ch);
+			serialize(aa, dd, ch);
 		}
 		break;
 	case 0x90 ... 0x9f:
@@ -167,7 +192,7 @@ int vgmfmprm_ym2612(uint8_t port, uint8_t aa, uint8_t dd)
 		ym2612reg[ch][10 + 11 * op] = (dd & 0x0f) >> 0; //00001111
 		if (g_flg.r){
 			printf("%08x %s[%d][%d][%d]reg: %02x %02x\n", fpos, CHIPNAME, port, ch + 1, op + 1, aa, dd);
-			serialize_ym2612(aa, dd, ch);
+			serialize(aa, dd, ch);
 		}
 		break;
 	case 0xb0 ... 0xb3:
@@ -179,16 +204,16 @@ int vgmfmprm_ym2612(uint8_t port, uint8_t aa, uint8_t dd)
 		ym2612reg[ch][44] = (dd & 0x07) >> 0; //00000111
 		if (g_flg.r){
 			printf("%08x %s[%d][%d]reg: %02x %02x\n", fpos, CHIPNAME, port, ch + 1, aa, dd);
-			serialize_ym2612(aa, dd, ch);
+			serialize(aa, dd, ch);
 		}
 		break;
 	default:
-		;
+		break;
 	}
 	return 1;
 }
 
-int format_ym2612(uint8_t ch)
+int format_ym2612(uint8_t ch, int tonenum)
 {
 	/* in mml2vgm
 	'@ N No
@@ -201,8 +226,8 @@ int format_ym2612(uint8_t ch)
 	uint8_t op;
 	uint8_t reg;
 
-	printf("%s[%d]:\n", CHIPNAME, ch + 1);
-	printf("'@ N No\n");
+	printf("%s[%d] samples:%d\n", CHIPNAME, ch + 1, samples);
+	printf("'@ N %d\n", tonenum);
 	printf("    AR  DR  SR  RR  SL  TL  KS  ML  DT  AM SSGEG\n");
 	for (op = 0; op < 4; op++){
 		printf("'@ ");
@@ -216,7 +241,7 @@ int format_ym2612(uint8_t ch)
 	return 1;
 }
 
-int serialize_ym2612(uint8_t aa, uint8_t dd, uint8_t ch)
+int serialize(uint8_t aa, uint8_t dd, uint8_t ch)
 {
 	int i;
 	printf("%08x,%02x,%02x,%s[%d]regs,", fpos, aa, dd, CHIPNAME, ch + 1);

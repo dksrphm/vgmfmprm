@@ -20,7 +20,7 @@ extern OPTIONS g_flg;
 extern uint32_t fpos;
 
 int format_ym2203(uint8_t);
-int serialize_ym2203(uint8_t, uint8_t, uint8_t);
+static int serialize(uint8_t, uint8_t, uint8_t);
 
 int vgmfmprm_ym2203(uint8_t aa, uint8_t dd)
 {
@@ -49,9 +49,9 @@ int vgmfmprm_ym2203(uint8_t aa, uint8_t dd)
 				regchg[ch] = 0;
 			}
 		}
-		if (g_flg.r){
-			printf("%08x %s[%d]reg: %02x %02x\n", fpos, CHIPNAME, ch + 1, aa, dd);
-		}
+//		if (g_flg.r){
+//			printf("%08x %s[%d]reg: %02x %02x\n", fpos, CHIPNAME, ch + 1, aa, dd);
+//		}
 		break;
 	case 0x30 ... 0x3e:
 		// DT ML
@@ -63,7 +63,7 @@ int vgmfmprm_ym2203(uint8_t aa, uint8_t dd)
 		ym2203reg[ch][8 + 11 * op] = (dd & 0x70) >> 4; //01110000
 		if (g_flg.r){
 			printf("%08x %s[%d][%d]reg: %02x %02x\n", fpos, CHIPNAME, ch + 1, op + 1, aa, dd);
-			serialize_ym2203(aa, dd, ch);
+			serialize(aa, dd, ch);
 		}
 		break;
 	case 0x40 ... 0x4f:
@@ -73,7 +73,7 @@ int vgmfmprm_ym2203(uint8_t aa, uint8_t dd)
 		ym2203reg[ch][5 + 11 * op] = (dd & 0x7f) >> 0; //01111111
 		if (g_flg.r){
 			printf("%08x %s[%d][%d]reg: %02x %02x\n", fpos, CHIPNAME, ch + 1, op + 1, aa, dd);
-			serialize_ym2203(aa, dd, ch);
+			serialize(aa, dd, ch);
 		}
 		break;
 	case 0x50 ... 0x5f:
@@ -86,7 +86,7 @@ int vgmfmprm_ym2203(uint8_t aa, uint8_t dd)
 		ym2203reg[ch][0 + 11 * op] = (dd & 0x1f) >> 0; //00011111
 		if (g_flg.r){
 			printf("%08x %s[%d][%d]reg: %02x %02x\n", fpos, CHIPNAME, ch + 1, op + 1, aa, dd);
-			serialize_ym2203(aa, dd, ch);
+			serialize(aa, dd, ch);
 		}
 		break;
 	case 0x60 ... 0x6f:
@@ -96,7 +96,7 @@ int vgmfmprm_ym2203(uint8_t aa, uint8_t dd)
 		ym2203reg[ch][1 + 11 * op] = (dd & 0x1f) >> 0; //00011111
 		if (g_flg.r){
 			printf("%08x %s[%d][%d]reg: %02x %02x\n", fpos, CHIPNAME, ch + 1, op + 1, aa, dd);
-			serialize_ym2203(aa, dd, ch);
+			serialize(aa, dd, ch);
 		}
 		break;
 	case 0x70 ... 0x7f:
@@ -106,7 +106,7 @@ int vgmfmprm_ym2203(uint8_t aa, uint8_t dd)
 		ym2203reg[ch][2 + 11 * op] = (dd & 0x1f) >> 0; //00011111
 		if (g_flg.r){
 			printf("%08x %s[%d][%d]reg: %02x %02x\n", fpos, CHIPNAME, ch + 1, op + 1, aa, dd);
-			serialize_ym2203(aa, dd, ch);
+			serialize(aa, dd, ch);
 		}
 		break;
 	case 0x80 ... 0x8f:
@@ -119,7 +119,7 @@ int vgmfmprm_ym2203(uint8_t aa, uint8_t dd)
 		ym2203reg[ch][3 + 11 * op] = (dd & 0x0f) >> 0; //00001111
 		if (g_flg.r){
 			printf("%08x %s[%d][%d]reg: %02x %02x\n", fpos, CHIPNAME, ch + 1, op + 1, aa, dd);
-			serialize_ym2203(aa, dd, ch);
+			serialize(aa, dd, ch);
 		}
 		break;
 	case 0x90 ... 0x9f:
@@ -129,7 +129,7 @@ int vgmfmprm_ym2203(uint8_t aa, uint8_t dd)
 		ym2203reg[ch][10 + 11 * op] = (dd & 0x0f) >> 0; //00001111
 		if (g_flg.r){
 			printf("%08x %s[%d][%d]reg: %02x %02x\n", fpos, CHIPNAME, ch + 1, op + 1, aa, dd);
-			serialize_ym2203(aa, dd, ch);
+			serialize(aa, dd, ch);
 		}
 		break;
 	case 0xb0 ... 0xb3:
@@ -141,7 +141,7 @@ int vgmfmprm_ym2203(uint8_t aa, uint8_t dd)
 		ym2203reg[ch][44] = (dd & 0x07) >> 0; //00000111
 		if (g_flg.r){
 			printf("%08x %s[%d]reg: %02x %02x\n", fpos, CHIPNAME, ch + 1, aa, dd);
-			serialize_ym2203(aa, dd, ch);
+			serialize(aa, dd, ch);
 		}
 		break;
 	default:
@@ -179,7 +179,13 @@ int format_ym2203(uint8_t ch)
 	printf("'@ %03d,%03d\n\n", ym2203reg[ch][44], ym2203reg[ch][45]);
 	return 1;
 }
-int serialize_ym2203(uint8_t aa, uint8_t dd, uint8_t ch)
+int serialize(uint8_t aa, uint8_t dd, uint8_t ch)
 {
+	int i;
+	printf("%08x,%02x,%02x,%s[%d]regs,", fpos, aa, dd, CHIPNAME, ch + 1);
+	for (i = 0; i < REGS; i++){
+		printf("%d,", ym2203reg[ch][i]);
+	}
+	printf("\n");
 	return 1;
 }
