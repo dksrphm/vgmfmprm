@@ -18,9 +18,10 @@
 extern OPTIONS g_flg;
 
 static uint8_t fmprm[CHS][REGS] = {0};
-static uint8_t regchg[CHS] = {0};
 static uint8_t tone[TONES][REGS] = {0};
-static uint8_t tones = 0;
+static int regchg[CHS] = {0};
+static int tones = 0;
+static int curtone[CHS] = {-1};
 
 int vgmfmprm_ym2151(uint8_t aa, uint8_t dd)
 {
@@ -68,10 +69,14 @@ int vgmfmprm_ym2151(uint8_t aa, uint8_t dd)
 					if (cmp){
 						// not exists in tone[]
 						formatM(CHIPNAME, ch, samples, tones, fmprm[ch]);
+						curtone[ch] = tones;
 						memcpy(tone[tones], fmprm[ch], sizeof(fmprm[ch]));
 						tones++;
 					} else {
-						printf("%s[%d] samples:%d @%d\n", CHIPNAME, ch + 1, samples, i);
+						if (i != curtone[ch]){
+							printf("%s[%d] samples:%d @%d\n", CHIPNAME, ch + 1, samples, i);
+							curtone[ch] = i;
+						}
 					}
 				}
 				regchg[ch] = 0;
