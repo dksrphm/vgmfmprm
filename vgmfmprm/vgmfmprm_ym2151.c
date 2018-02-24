@@ -13,11 +13,10 @@
 #define CHS 8
 #define REGS 46
 
+extern OPTIONS g_flg;
+
 static uint8_t ym2151reg[CHS][REGS] = {0};
 static uint8_t regchg[CHS] = {0};
-
-extern OPTIONS g_flg;
-extern uint32_t fpos;
 
 int format_ym2151(uint8_t);
 
@@ -165,7 +164,7 @@ int format_ym2151(uint8_t ch)
 	uint8_t op;
 	uint8_t reg;
 
-	printf("%s[%d]:\n", CHIPNAME, ch + 1);
+	printf("%s[%d] samples:%d\n", CHIPNAME, ch + 1, samples);
 	printf("'@ M No\n");
 	printf("    AR  DR  SR  RR  SL  TL  KS  ML DT1 DT2 AME\n");
 	for (op = 0; op < 4; op++){

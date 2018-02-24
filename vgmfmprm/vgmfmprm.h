@@ -5,9 +5,12 @@
  *      Author: dsrphm
  */
 
+#include <stdint.h>
+extern uint32_t samples;
+extern uint32_t fpos;
+
 #ifndef VGMFMPRM_H_
 #define VGMFMPRM_H_
-#include <stdint.h>
 typedef struct {
 	char vgmFilename[256];
 	uint8_t d;

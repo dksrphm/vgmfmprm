@@ -21,15 +21,12 @@
 #define REGS 46
 #define TONES 255
 
+extern OPTIONS g_flg;
+
 static uint8_t ym2612reg[CHS][REGS] = {0};
 static uint8_t regchg[CHS] = {0};
 static uint8_t tone[TONES][REGS] = {0};
 static uint8_t tones = 0;
-
-extern OPTIONS g_flg;
-extern uint32_t fpos;
-extern uint32_t samples;
-
 
 int format_ym2612(uint8_t, int);
 static int serialize(uint8_t, uint8_t, uint8_t);

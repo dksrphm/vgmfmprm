@@ -17,7 +17,6 @@ static uint8_t ym2203reg[CHS][REGS] = {0};
 static uint8_t regchg[CHS] = {0};
 
 extern OPTIONS g_flg;
-extern uint32_t fpos;
 
 int format_ym2203(uint8_t);
 static int serialize(uint8_t, uint8_t, uint8_t);
@@ -147,9 +146,6 @@ int vgmfmprm_ym2203(uint8_t aa, uint8_t dd)
 	default:
 		break;
 	}
-
-
-
 	return 1;
 }
 int format_ym2203(uint8_t ch)
@@ -165,7 +161,7 @@ int format_ym2203(uint8_t ch)
 	uint8_t op;
 	uint8_t reg;
 
-	printf("%s[%d]:\n", CHIPNAME, ch + 1);
+	printf("%s[%d] samples:%d\n", CHIPNAME, ch + 1, samples);
 	printf("'@ N No\n");
 	printf("    AR  DR  SR  RR  SL  TL  KS  ML  DT  AM SSGEG\n");
 	for (op = 0; op < 4; op++){
