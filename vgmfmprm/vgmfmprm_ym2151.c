@@ -49,16 +49,12 @@ int vgmfmprm_ym2151(uint8_t aa, uint8_t dd)
 
 	switch (aa){
 	case 0x08:
-		// 音色関係のレジスタが変更され、Key-Onとなった時点で
-		// その時の音色定義を出力する
 		ch = dd & 0x07;
 		if (regchg[ch]){
 			if (dd & 0xf0){ // 11110000
-				// tones already > TONES?
 				if (TONES < tones){
 					printf("%s: tones over %d.\n", CHIPNAME, TONES);
 				} else {
-					// are fmprm[] already exist in tone[]?
 					cmp = 1;
 					for (i = 0; i < tones; i++){
 						if (!memcmp(tone[i], fmprm[ch], sizeof(fmprm[ch]))){
@@ -67,7 +63,6 @@ int vgmfmprm_ym2151(uint8_t aa, uint8_t dd)
 						}
 					}
 					if (cmp){
-						// not exists in tone[]
 						formatM(CHIPNAME, ch, samples, tones, fmprm[ch]);
 						curtone[ch] = tones;
 						memcpy(tone[tones], fmprm[ch], sizeof(fmprm[ch]));

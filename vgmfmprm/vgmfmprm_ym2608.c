@@ -62,7 +62,6 @@ int vgmfmprm_ym2608(uint8_t port, uint8_t aa, uint8_t dd)
 	int i;
 	int cmp;
 
-	// portとaaからchを求める
 	if ((aa % 4) == 3){
 		return 0;
 	}
@@ -70,16 +69,12 @@ int vgmfmprm_ym2608(uint8_t port, uint8_t aa, uint8_t dd)
 
 	switch (aa){
 	case 0x28:
-		// 音色関係のレジスタが変更され、Key-Onとなった時点で
-		// その時の音色定義を出力する
 		ch = chind[dd & 0x07];
 		if (regchg[ch]){
 			if (dd & 0xf0){ // 11110000
-				// tones already > TONES?
 				if (TONES < tones){
 					printf("%s: tones over %d.\n", CHIPNAME, TONES);
 				} else {
-					// are fmprm[] already exist in tone[]?
 					cmp = 1;
 					for (i = 0; i < tones; i++){
 						if (!memcmp(tone[i], fmprm[ch], sizeof(fmprm[ch]))){
@@ -88,7 +83,6 @@ int vgmfmprm_ym2608(uint8_t port, uint8_t aa, uint8_t dd)
 						}
 					}
 					if (cmp){
-						// not exists in tone[]
 						formatN(CHIPNAME, ch, samples, tones, fmprm[ch]);
 						curtone[ch] = tones;
 						memcpy(tone[tones], fmprm[ch], sizeof(fmprm[ch]));

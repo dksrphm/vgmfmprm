@@ -26,11 +26,11 @@ int main(int argc, char *argv[])
 	while ((opt = getopt(argc, argv, "dr")) != -1) {
 		switch (opt) {
 		case 'd':
-			// 色々出力するオプション
+			// debug output for user
 			g_flg.d = 1;
 			break;
 		case 'r':
-			// レジスタの変更情報を出力するオプション
+			// output parameters status
 			g_flg.r = 1;
 			break;
 		default:
@@ -53,7 +53,7 @@ int main(int argc, char *argv[])
 		printf("	-d: print debug info.\n	-r: print tone register info.\n");
 		return 1;
 	}
-	// パラメータに指定されたファイルを開く
+	// open vgm file(not vgz file...)
 	printf("VGM file name: %s\n", vgmFilename);
 	if (!(fp = fopen(vgmFilename, "rb"))){
 		printf("File open error: %s\n", vgmFilename);
@@ -66,7 +66,7 @@ int main(int argc, char *argv[])
 		fclose(fp);
 		return 1;
 	}
-	// ヘッダを構造体へ読み込む
+	// read VGM header
 	readvgmheader(fp, &vgm_header);
 	if (g_flg.d){
 		printf("version: %x\n", vgm_header.version);

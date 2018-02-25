@@ -44,7 +44,7 @@ int vgmfmprm_ym2612(uint8_t port, uint8_t aa, uint8_t dd)
 	'@ AR D1R D2R RR D1L TL RS MUL DT1 AM SSGEG <- fmprm[ch][33]-[43]
 	'@ AL FB <- fmprm[ch][44]-[45]
 	*/
-	/*
+	/* dd and operators:
 		0xX0 ch1 op1
 		0xX1 ch2 op1
 		0xX2 ch3 op1
@@ -62,7 +62,16 @@ int vgmfmprm_ym2612(uint8_t port, uint8_t aa, uint8_t dd)
 	int i;
 	int cmp;
 
-	// portとaaからchを求める
+	// YM2608, YM2610B, YM2612
+	// port, aa, and ch:
+	//   port:0 aa%4:0 -> ch:0
+	//   port:0 aa%4:1 -> ch:1
+	//   port:0 aa%4:2 -> ch:2
+	//   port:0 aa%4:3 -> N/A
+	//   port:1 aa%4:0 -> ch:3
+	//   port:1 aa%4:1 -> ch:4
+	//   port:1 aa%4:2 -> ch:5
+	//   port:1 aa%4:3　-> N/A
 	if ((aa % 4) == 3){
 		return 0;
 	}
@@ -70,8 +79,10 @@ int vgmfmprm_ym2612(uint8_t port, uint8_t aa, uint8_t dd)
 
 	switch (aa){
 	case 0x28:
-		// 音色関係のレジスタが変更され、Key-Onとなった時点で
-		// その時の音色定義を出力する
+		// KeyOn.
+		// Output FM parameters
+		// when registers(for tone) was changed(regchg[ch] != 0)
+		// and tone number was changed
 		ch = chind[dd & 0x07];
 		if (regchg[ch]){
 			if (dd & 0xf0){ // 11110000
@@ -79,7 +90,7 @@ int vgmfmprm_ym2612(uint8_t port, uint8_t aa, uint8_t dd)
 				if (TONES < tones){
 					printf("%s: tones over %d.\n", CHIPNAME, TONES);
 				} else {
-					// are fmprm[] already exist in tone[]?
+					// Are fmprm[] already exist in tone[]?
 					cmp = 1;
 					for (i = 0; i < tones; i++){
 						if (!memcmp(tone[i], fmprm[ch], sizeof(fmprm[ch]))){
@@ -88,13 +99,18 @@ int vgmfmprm_ym2612(uint8_t port, uint8_t aa, uint8_t dd)
 						}
 					}
 					if (cmp){
-						// not exists in tone[]
+						// Not exists in tone[]:
+						// Output parameters in vgm2mml format
 						formatN(CHIPNAME, ch, samples, tones, fmprm[ch]);
+						// Set current tone number
 						curtone[ch] = tones;
+						// Set current parameters to new tone
 						memcpy(tone[tones], fmprm[ch], sizeof(fmprm[ch]));
 						tones++;
 					} else {
+						// Already exists in tone[]:
 						if (i != curtone[ch]){
+							// Tone number is changed
 							printf("%s[%d] samples:%d @%d\n", CHIPNAME, ch + 1, samples, i);
 							curtone[ch] = i;
 						}

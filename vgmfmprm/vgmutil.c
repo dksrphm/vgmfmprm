@@ -12,16 +12,17 @@
 
 int readvgmheader(FILE *fp, struct vgm_header_tag *vgm_header)
 {
-	// VGMファイルよりバージョンを読み込み、
-	// そのバージョンに応じて必要なサイズをヘッダとして読み込む
+	// read header from vgm file.
+	// 1.read VERSION from header.
+	// 2.determine version.
+	// 3.read suitable size from header.
 	uint32_t version;
 	fpos_t offset;
 
-	// バージョンを読み込む
 	fgetpos(fp, &offset);
 	fseek(fp, POSVER, SEEK_SET);
 	fread(&version, sizeof(version), 1, fp);
-	// ヘッダを読み込む
+
 	rewind(fp);
 	if (version <= VER150){
 		fread(vgm_header, LEN150, 1, fp);
@@ -39,7 +40,7 @@ int readvgmheader(FILE *fp, struct vgm_header_tag *vgm_header)
 
 int chkvgm(FILE *fp)
 {
-	// ファイルがVGMファイルかどうかを、ヘッダ先頭が"Vgm "か否かでチェック
+	// Check file is vgm format file or not.
 	char idstr[4];
 	fpos_t offset;
 	int rc = 0;
@@ -81,6 +82,7 @@ int seektostream(FILE *fp, struct vgm_header_tag *vgm_header)
 }
 int formatN(char *CHIPNAME, int ch, uint32_t samples, int tonenum, uint8_t fmprm[46])
 {
+	// Output tone parameters in 'N' format.(for YM2608, 2610B, ...)
 	/* in mml2vgm
 	'@ N No
 	'@ AR DR SR RR SL TL KS ML DT AM SSGEG <- ym2203reg[ch][0]-[10]
@@ -108,6 +110,7 @@ int formatN(char *CHIPNAME, int ch, uint32_t samples, int tonenum, uint8_t fmprm
 }
 int formatM(char *CHIPNAME, int ch, uint32_t samples, int tonenum, uint8_t fmprm[46])
 {
+	// Output tone parameters in 'M' format.(for YM2151)
 	/* in mml2vgm
 	'@ M No
 	'@ AR DR SR RR SL TL KS ML DT1 DT2 AME <- ym2151reg[ch][0]-[10]

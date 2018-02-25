@@ -50,11 +50,9 @@ int vgmfmprm_ym2203(uint8_t aa, uint8_t dd)
 		ch = dd & 0x03;
 		if (regchg[ch]){
 			if (dd & 0xf0){ // 11110000
-				// tones already > TONES?
 				if (TONES < tones){
 					printf("%s: tones over %d.\n", CHIPNAME, TONES);
 				} else {
-					// are fmprm[] already exist in tone[]?
 					cmp = 1;
 					for (i = 0; i < tones; i++){
 						if (!memcmp(tone[i], fmprm[ch], sizeof(fmprm[ch]))){
@@ -63,7 +61,6 @@ int vgmfmprm_ym2203(uint8_t aa, uint8_t dd)
 						}
 					}
 					if (cmp){
-						// not exists in tone[]
 						formatN(CHIPNAME, ch, samples, tones, fmprm[ch]);
 						curtone[ch] = tones;
 						memcpy(tone[tones], fmprm[ch], sizeof(fmprm[ch]));
