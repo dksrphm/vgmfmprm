@@ -21,7 +21,7 @@ Example
 	'@ 031,009,000,008,015,025,001,000,004,000,000,
 	'@ 031,009,000,008,015,000,001,000,004,000,000,
 	   ALG  FB
-	'@ 001,006　　
+	'@ 001,006  
 
 	YM2151[5] samples:402 @1		// YM2151 Ch5 uses tone id @1 at VGMsample#: 402
 	'@ M 1					// FM tone parameters of @1 in mml2vgm format.
@@ -37,7 +37,6 @@ Example
 	:
 
 These parameters can use in mml2vgm's *.gwi files.  
-　　
 
 How to build
 --
