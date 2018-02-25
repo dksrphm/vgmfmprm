@@ -2,7 +2,7 @@
  * vgmfmprm_ym2610b.c
  *
  *  Created on: 2018/02/24
- *      Author: dsrphm
+ *      Author: dksrphm
  */
 
 #include <stdio.h>

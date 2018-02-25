@@ -2,7 +2,7 @@
  * vgmutil.h
  *
  *  Created on: 2018/02/23
- *      Author: dsrphm
+ *      Author: dksrphm
  */
 
 #ifndef VGMUTIL_H_

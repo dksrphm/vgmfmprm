@@ -2,7 +2,7 @@
  * vgmfmprm.h
  *
  *  Created on: 2018/02/23
- *      Author: dsrphm
+ *      Author: dksrphm
  */
 
 #include <stdint.h>

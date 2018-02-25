@@ -2,7 +2,7 @@
  * vgmfmprm_ym2203.c
  *
  *  Created on: 2018/02/23
- *      Author: dsrphm
+ *      Author: dksrphm
  */
 
 #include <stdio.h>

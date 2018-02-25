@@ -2,7 +2,7 @@
  * vgmheader.h
  *
  *  Created on: 2018/02/22
- *      Author: dsrphm
+ *      Author: dksrphm
  */
 
 #ifndef VGMHEADER_H_
