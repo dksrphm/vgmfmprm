@@ -10,6 +10,13 @@
 #include "vgmutil.h"
 #include "vgmheader.h"
 
+int readvgmheader(FILE *, struct vgm_header_tag *);
+int chkvgm(FILE *);
+int seektostream(FILE *, struct vgm_header_tag *);
+int calcEndPos(struct vgm_header_tag *);
+int formatN(char *, int, uint32_t, int, uint8_t *);
+int formatM(char *, int, uint32_t, int, uint8_t *);
+
 int readvgmheader(FILE *fp, struct vgm_header_tag *vgm_header)
 {
 	// read header from vgm file.

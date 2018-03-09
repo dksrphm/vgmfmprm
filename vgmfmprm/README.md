@@ -45,4 +45,4 @@ Extract source zip.
 &gt; make all  
 
 You need MinGW(gcc, make, ...) to build.  
-I use Eclipse with CDT, but you can make this.
+I also use Eclipse with CDT, but you can make this without them.

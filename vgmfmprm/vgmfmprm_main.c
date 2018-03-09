@@ -14,6 +14,8 @@ uint32_t fpos;
 
 extern OPTIONS g_flg;
 
+int vgmfmprm_main(FILE *, struct vgm_header_tag *);
+
 int vgmfmprm_main(FILE *fp, struct vgm_header_tag *vgm_header)
 {
 	fpos_t ft;

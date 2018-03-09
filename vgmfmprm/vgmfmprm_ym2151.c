@@ -23,6 +23,8 @@ static int regchg[CHS] = {0};
 static int tones = 0;
 static int curtone[CHS] = {-1};
 
+int vgmfmprm_ym2151(uint8_t, uint8_t);
+
 int vgmfmprm_ym2151(uint8_t aa, uint8_t dd)
 {
 	/* in mml2vgm

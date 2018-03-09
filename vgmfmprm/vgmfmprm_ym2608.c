@@ -25,6 +25,8 @@ static int curtone[CHS] = {-1};
 
 static int serialize(uint8_t, uint8_t, uint8_t);
 
+int vgmfmprm_ym2608(uint8_t, uint8_t, uint8_t);
+
 int vgmfmprm_ym2608(uint8_t port, uint8_t aa, uint8_t dd)
 {
 	/* in mml2vgm
